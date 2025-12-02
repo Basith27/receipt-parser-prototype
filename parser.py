@@ -54,7 +54,8 @@ def extract_custom_fields(all_text):
     
     # GSTIN pattern: 15 characters (2 digits + 10 alphanumeric + 1 digit + 1 letter + 1 alphanumeric)
     # Example: 29AABCT1332L1Z2
-    gstin_pattern = r'\b\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}\b'
+    # gstin_pattern = r'\b\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}\b'
+    gstin_pattern = r'(?i)GSTIN[:\s]*([A-Z0-9]{15})\b'
     gstin_match = re.search(gstin_pattern, all_text)
     if gstin_match:
         gstin = gstin_match.group(0)
@@ -132,7 +133,7 @@ if __name__ == '__main__':
     
     # IMPORTANT: Download a test receipt and place it in your project folder
     # For best results, use the "JC TRADING" receipt which has a clear GSTIN
-    test_file_name = "JC_trading-receipt.jpg" # Change this to your test file's name
+    test_file_name = "Receipt_2.jpg" # Change this to your test file's name
     
     try:
         if not os.path.exists(test_file_name):
