@@ -80,7 +80,7 @@ def analyze_receipt(file_path: str) -> dict:
     receipts = poller.result()
 
     parsed_data = {
-        "merchant_name": None, "transaction_date": None, "total": None,
+        "merchant_name": None, "transaction_date": None, "total": None, "tax_amount": None,
         "items": [], "gstin": None, "hsn": None
     }
 
@@ -88,15 +88,27 @@ def analyze_receipt(file_path: str) -> dict:
         doc = receipts.documents[0]
         
         parsed_data["merchant_name"] = get_field_value(doc, "MerchantName")
-        parsed_data["transaction_date"] = get_field_value(doc, "TransactionDate")
+        date_val, date_conf = get_field_value(doc, "TransactionDate")
+
+        if date_val:
+            parsed_data["transaction_date"] = (date_val.isoformat(), date_conf)
+        else:
+            parsed_data["transaction_date"] = (None, 0.0)
+            
         parsed_data["total"] = get_field_value(doc, "Total", value_type="amount")
+        parsed_data["tax_amount"] = get_field_value(doc, "TotalTax", value_type="amount")
 
         items_field = doc.fields.get("Items")
         if items_field and items_field.value:
             for item in items_field.value:
                 desc = get_field_value(item.value, "Description")
                 price = get_field_value(item.value, "TotalPrice", value_type="amount")
-                parsed_data["items"].append({"description": desc, "total_price": price})
+                quantity = get_field_value(item.value, "Quantity")
+                parsed_data["items"].append({
+                    "description": desc,
+                    "total_price": price,
+                    "quantity": quantity
+                })
 
         all_text = receipts.content
         gstin_val, hsn_val = extract_custom_fields(all_text)

@@ -1,9 +1,11 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename
 from parser import analyze_receipt
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -33,16 +35,20 @@ def analyze():
 
         try:
             extracted_data = analyze_receipt(filepath)
-            return render_template('results.html', data=extracted_data, filename=filename)
+
+            return jsonify({
+                "success": True,
+                "data": extracted_data
+            }), 200
 
         except Exception as e:
             print(f"An error occurred during analysis: {e}")
-            return render_template('error.html', error_message=str(e))
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
 
     return redirect(url_for('index'))
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
