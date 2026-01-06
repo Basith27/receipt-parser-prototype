@@ -1,0 +1,9 @@
+{
+  "confidence_threshold": 90,
+  "confidence_weights": {
+    "total": 0.40,
+    "merchant_name": 0.25,
+    "gstin": 0.20,
+    "transaction_date": 0.15
+  }
+}

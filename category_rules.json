@@ -1,0 +1,14 @@
+{
+  "Food Cost": [
+    "SYSCO",
+    "RESTAURANT DEPOT"
+  ],
+  "Maintenance": [
+    "HOME DEPOT",
+    "ANIL'S GENERAL STORE"
+  ],
+  "Transportation": [
+    "UBER",
+    "OLA CABS"
+  ]
+}
